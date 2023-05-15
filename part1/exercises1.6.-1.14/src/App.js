@@ -4,16 +4,19 @@ const Button = ({ text, onClick }) => {
   return <button onClick={onClick}>{text}</button>;
 };
 
-const App = () => {
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
-  const [all, setAll] = useState(0);
-
+const Statistics = ({
+  setAll,
+  setGood,
+  setBad,
+  setNeutral,
+  good,
+  neutral,
+  bad,
+  all,
+}) => {
   const positive = (good / all) * 100;
 
   const average = (good + bad * -1) / all;
-
   return (
     <div>
       <h2>Give feedback</h2>
@@ -46,6 +49,26 @@ const App = () => {
       <p>average {average}</p>
       <p>positive {positive} %</p>
     </div>
+  );
+};
+
+const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+  const [all, setAll] = useState(0);
+
+  return (
+    <Statistics
+      good={good}
+      setGood={setGood}
+      neutral={neutral}
+      setNeutral={setNeutral}
+      bad={bad}
+      setBad={setBad}
+      all={all}
+      setAll={setAll}
+    />
   );
 };
 
