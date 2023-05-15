@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Header = (props) => {
   return <h1>{props.course.name}</h1>;
@@ -48,12 +48,33 @@ const App = () => {
     ],
   };
 
+  const [esquerda, setEsquerda] = useState(0);
+  const [direita, setDireita] = useState(0);
+  const [todosOsCliques, setTodos] = useState([]);
+
+  const handleCliqueEsquerda = () => {
+    setTodos(todosOsCliques.concat('E'));
+    setEsquerda(esquerda + 1);
+  };
+
+  const handleCliqueDireita = () => {
+    setDireita(direita + 1);
+  };
+
   return (
     <div>
-      <Header course={course} />
-      <Content parts={course.parts} />
-      <Total parts={course.parts} />
+      {esquerda}
+      <button onClick={handleCliqueEsquerda}>Esquerda</button>
+      <button onClick={handleCliqueDireita}>Direita</button>
+      <p>{todosOsCliques.join(' ')}</p>
+      {console.log(todosOsCliques)}
     </div>
+    //   <div>
+    //     <Header course={course} />
+    //     <Content parts={course.parts} />
+    //     <Total parts={course.parts} />
+    //   </div>
+    // );
   );
 };
 
