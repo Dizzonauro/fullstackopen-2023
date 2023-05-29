@@ -15,26 +15,50 @@ function App() {
   const [points, setPoints] = useState(Array(anecdotes.length).fill(0));
 
   const [selected, setSelected] = useState(0);
+  const [mostVoted, setMostVoted] = useState(false);
 
   const addPoints = () => {
     const copy = [...points];
     copy[selected] += 1;
     setPoints(copy);
-    console.log(points);
+    setMostVoted(true);
   };
 
   function randomNumber(x) {
     return Math.floor(Math.random() * (x + 1));
   }
 
+  function findAnecdoteWithMostVotes() {
+    const copy = [...points];
+    let bigger = copy[0];
+    let index = 0;
+    for (let i = 1; i < copy.length; i++) {
+      if (copy[i] >= bigger) {
+        bigger = copy[i];
+        index = i;
+      }
+    }
+    return index;
+  }
+
+  let anecdoteMostVoted = findAnecdoteWithMostVotes();
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <button onClick={addPoints}>vote</button>
       <button onClick={() => setSelected(randomNumber(anecdotes.length - 1))}>
         next anecdote
       </button>
       <p>{points}</p>
+      <h2>Anecdote with most votes</h2>
+      {mostVoted && (
+        <p>
+          {anecdotes[anecdoteMostVoted]} <br />
+          has {points[anecdoteMostVoted]} votes
+        </p>
+      )}
     </div>
   );
 }
