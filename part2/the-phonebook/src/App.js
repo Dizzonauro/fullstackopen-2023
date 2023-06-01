@@ -10,9 +10,17 @@ const App = () => {
 
   const addPerson = (e) => {
     e.preventDefault();
+    if (!newName) {
+      return alert('empty input');
+    }
     const personObj = {
       name: newName,
     };
+
+    if (persons.find((p) => p.name === newName)) {
+      alert(`${newName} is already added to phonebook`);
+      return;
+    }
     setPersons(persons.concat(personObj));
     setNewName('');
   };
@@ -22,7 +30,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={addPerson}>
         <div>
-          name: <input onChange={handleNameChange} />
+          name: <input value={newName} onChange={handleNameChange} />
         </div>
         <div>
           <button type="submit">add</button>
