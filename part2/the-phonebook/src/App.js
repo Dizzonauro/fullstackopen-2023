@@ -17,12 +17,35 @@ const App = () => {
       .then((initialPersons) => setPersons(initialPersons));
   }, []);
 
+  const deletePerson = async (id, name) => {
+    const result = window.confirm(`Delete ${name}?`);
+    try {
+      if (result) {
+        await personsService.removePerson(id);
+      }
+      attComponent();
+    } catch (error) {
+      console.log('delete error:', error);
+    }
+  };
+
+  const attComponent = async () => {
+    try {
+      const data = await personsService.getAll();
+      setPersons(data);
+    } catch (error) {
+      console.log('att error: ', error);
+    }
+  };
+
   const handleNameChange = (e) => {
     setNewName(e.target.value);
   };
+
   const handleNumberChange = (e) => {
     setNewNumber(e.target.value);
   };
+
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
@@ -43,9 +66,9 @@ const App = () => {
     }
     personsService.create(personObj).then((returnedPerson) => {
       setPersons(persons.concat(returnedPerson));
-      setNewNumber('');
-      setNewName('');
     });
+    setNewNumber('');
+    setNewName('');
   };
 
   const filterPerson =
@@ -63,9 +86,11 @@ const App = () => {
         onSubmit={addPerson}
         onChange={handleNameChange}
         onChangeTwo={handleNumberChange}
+        value1={newName}
+        value2={newNumber}
       />
       <h3>Numbers</h3>
-      <Persons persons={persons} />
+      <Persons persons={persons} onItemClicked={deletePerson} />
     </div>
   );
 };
