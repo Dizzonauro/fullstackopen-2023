@@ -12,16 +12,17 @@ const create = (newObject) => {
   return request.then((response) => response.data);
 };
 
-const removePerson = async (id) => {
-  axios
-    .delete(`${baseUrl}/${id}`)
-    .catch((error) => console.log('error:', error));
-  return getAll();
+const removePerson = (id) => {
+  return axios.delete(`${baseUrl}/${id}`);
 };
 
 const update = (id, newObject) => {
   const request = axios.put(`${baseUrl}/${id}`, newObject);
-  return request.then((response) => response.data);
+  return request
+    .then((response) => response.data)
+    .catch((error) => {
+      console.log('fail update');
+    });
 };
 
 export default {

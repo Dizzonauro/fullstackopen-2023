@@ -4,12 +4,15 @@ import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 
 import personsService from './services/persons';
+import { Notification } from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [search, setSearch] = useState('');
+  const [success, setSuccess] = useState(null);
+  const [typeMessage, setTypeMessage] = useState('success');
 
   useEffect(() => {
     personsService
@@ -18,14 +21,26 @@ const App = () => {
   }, []);
 
   const deletePerson = async (id, name) => {
+    attComponent();
     const result = window.confirm(`Delete ${name}?`);
-    try {
-      if (result) {
+    if (result) {
+      try {
         await personsService.removePerson(id);
+        attComponent();
+        setTypeMessage('success');
+        setSuccess(`Information for ${name} has been removed from server`);
+        setTimeout(() => {
+          setSuccess(null);
+        }, 2000);
+      } catch (error) {
+        setSuccess(
+          `Information for ${name} has already been removed from server`,
+        );
+        setTypeMessage('error');
+        setTimeout(() => {
+          setSuccess(null);
+        }, 2000);
       }
-      attComponent();
-    } catch (error) {
-      console.log('delete error:', error);
     }
   };
 
@@ -70,6 +85,13 @@ const App = () => {
         personsService.update(id, changedNumber).then((returnedPerson) => {
           setPersons(persons.map((p) => (p.id !== id ? p : returnedPerson)));
         });
+        setTypeMessage('success');
+        setSuccess(
+          `Added the new number ${newNumber} to the contact: ${newName}`,
+        );
+        setTimeout(() => {
+          setSuccess(null);
+        }, 2000);
         setNewNumber('');
         setNewName('');
         return;
@@ -77,13 +99,18 @@ const App = () => {
     } else if (persons.find((p) => p.name === newName)) {
       alert(`${newName} is already added to phonebook`);
       return;
+    } else {
+      personsService.create(personObj).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+      });
+      setSuccess(`Added ${newName}`);
+      setTypeMessage('success');
+      setTimeout(() => {
+        setSuccess(null);
+      }, 2000);
+      setNewNumber('');
+      setNewName('');
     }
-
-    personsService.create(personObj).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-    });
-    setNewNumber('');
-    setNewName('');
   };
 
   const filterPerson =
@@ -95,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={success} type={typeMessage} />
       <Filter filterPerson={filterPerson} onChange={handleSearch} />
       <h3>add a new</h3>
       <PersonForm
