@@ -60,10 +60,25 @@ const App = () => {
       number: newNumber,
     };
 
-    if (persons.find((p) => p.name === newName)) {
+    if (persons.find((p) => p.name === newName && p.number !== newNumber)) {
+      const { id, name } = persons.find((p) => p.name === newName);
+      const result = window.confirm(
+        `${name} is already added to phonebook, replace the old number with a new one?`,
+      );
+      if (result) {
+        const changedNumber = { ...personObj, number: newNumber };
+        personsService.update(id, changedNumber).then((returnedPerson) => {
+          setPersons(persons.map((p) => (p.id !== id ? p : returnedPerson)));
+        });
+        setNewNumber('');
+        setNewName('');
+        return;
+      }
+    } else if (persons.find((p) => p.name === newName)) {
       alert(`${newName} is already added to phonebook`);
       return;
     }
+
     personsService.create(personObj).then((returnedPerson) => {
       setPersons(persons.concat(returnedPerson));
     });

@@ -19,8 +19,14 @@ const removePerson = async (id) => {
   return getAll();
 };
 
+const update = (id, newObject) => {
+  const request = axios.put(`${baseUrl}/${id}`, newObject);
+  return request.then((response) => response.data);
+};
+
 export default {
   getAll: getAll,
   create: create,
   removePerson: removePerson,
+  update: update,
 };
