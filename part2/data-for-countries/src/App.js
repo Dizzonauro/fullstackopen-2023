@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import City from './components/City';
 
 function App() {
   const [searchName, setSearchName] = useState('');
@@ -20,27 +21,35 @@ function App() {
         });
     }
   }, [searchName]);
-  const names = countries.map((country) => country.name);
-  const capital = countries.map((country) => country.capital);
-  const area = countries.map((country) => country.area);
-  const languages = countries.map((country) => country.languages);
-  const flags = countries.map((country) => country.flags);
+  const filteredCountries = {
+    names: countries.map((country) => country.name),
+    capital: countries.map((country) => country.capital),
+    area: countries.map((country) => country.area),
+    languages: countries.map((country) => country.languages),
+    flags: countries.map((country) => country.flags),
+  };
 
   const renderCountry = () => {
-    if (names.length > 10) {
+    if (filteredCountries.names.length > 10) {
       return <div>Too many matches, specify another filter</div>;
-    } else if (names.length > 1 && names.length <= 10) {
-      return names.map((n) => <div key={n.common}>{n.common}</div>);
-    } else if (names.length === 1) {
+    } else if (
+      filteredCountries.names.length > 1 &&
+      filteredCountries.names.length <= 10
+    ) {
+      const specs = countries.map((country) => (
+        <City key={country.name.common} country={country} />
+      ));
+      return specs;
+    } else if (filteredCountries.names.length === 1) {
       const arrLanguages = [];
-      for (let [key, value] of Object.entries(languages[0])) {
+      for (let [key, value] of Object.entries(filteredCountries.languages[0])) {
         arrLanguages.push(value);
       }
       return (
         <div>
-          <h1>{names[0].common}</h1>
-          <div>Capital: {capital}</div>
-          <div>area: {area}</div>
+          <h1>{filteredCountries.names[0].common}</h1>
+          <div>Capital: {filteredCountries.capital}</div>
+          <div>area: {filteredCountries.area}</div>
           <h4>Languages:</h4>
           <ul>
             {arrLanguages.map((l) => (
@@ -49,8 +58,8 @@ function App() {
           </ul>
           <img
             style={{ width: '200px' }}
-            src={flags[0].svg}
-            alt={flags.alt}
+            src={filteredCountries.flags[0].svg}
+            alt={filteredCountries.flags[0].alt}
           ></img>
         </div>
       );
